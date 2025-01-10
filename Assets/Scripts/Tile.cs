@@ -14,6 +14,7 @@ public class Tile
         wall,
         start,
         end,
+        turn,
         none,
     }
     public TypeTile returnType(int num)
@@ -30,6 +31,8 @@ public class Tile
                 return TypeTile.start;
             case 4:
                 return TypeTile.end;
+            case 5: 
+                return TypeTile.turn;
 
             default:
                 {

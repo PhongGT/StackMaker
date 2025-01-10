@@ -3,11 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MapRenderer : MonoBehaviour
 {
+    public static MapRenderer Instance;
     [SerializeField] string path;
+    
     [SerializeField] string[] listString;
     [SerializeField] GameObject brickPrefab; 
     [SerializeField] GameObject wallPrefab;
@@ -15,6 +18,7 @@ public class MapRenderer : MonoBehaviour
     [SerializeField] GameObject loseBrickPrefab;    
     [SerializeField] GameObject startPrefab;    
     [SerializeField] GameObject endPrefab;
+    [SerializeField]List<GameObject> list;
 
     Vector3 getStartPoint;
     protected GameObject player;
@@ -24,45 +28,54 @@ public class MapRenderer : MonoBehaviour
     private void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        
+        list = new List<GameObject>();
     }
     void Start()
     {
-        loadString(path);
-        Genmap();
-        player.transform.position = getStartPoint;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+        NewMap(CombinePath());
     }
-
-
-    void Update()
-    {
-
-    }
-
+    
     public void  Renderer (Tile.TypeTile type, int x , int z)
     {
-        if(type == Tile.TypeTile.wall)
+        GameObject newobj;
+        if (type == Tile.TypeTile.wall)
         {
-            Instantiate(wallPrefab, new Vector3(x, 0 , z), this.transform.rotation, this.transform);
+            newobj = Instantiate(wallPrefab, new Vector3(x, 0 , z), this.transform.rotation, this.transform);
+            list.Add(newobj);
         }
         else if(type == Tile.TypeTile.haveBrick)
         {
-            GameObject newobj = Instantiate(brickPrefab, new Vector3(x, 0, z), this.transform.rotation, this.transform);
-            newobj.name = x.ToString() + z.ToString();
+            newobj = Instantiate(brickPrefab, new Vector3(x, 0, z), this.transform.rotation, this.transform);
+            newobj.name = x.ToString() + z.ToString(); list.Add(newobj);
+
         }
         else if (type == Tile.TypeTile.start)
         {
             getStartPoint = new Vector3(x, 0 , z);
-            Instantiate(startPrefab, new Vector3(x, 0, z), this.transform.rotation, this.transform);
-            
+            newobj = Instantiate(startPrefab, new Vector3(x, 0, z), this.transform.rotation, this.transform);
+            list.Add(newobj);
+
         }
         else if (type == Tile.TypeTile.lostBrick)
         {
-            Instantiate(loseBrickPrefab, new Vector3(x, 0, z), this.transform.rotation, this.transform);
+            newobj = Instantiate(loseBrickPrefab, new Vector3(x, 0, z), this.transform.rotation, this.transform);
+            list.Add(newobj);
         }
         else if (type == Tile.TypeTile.end)
         {
-            Instantiate(endPrefab, new Vector3(x, 0, z), this.transform.rotation, this.transform);
+            newobj = Instantiate(endPrefab, new Vector3(x, 0, z), this.transform.rotation, this.transform);
+            list.Add(newobj);
         }
+           
     }
     protected void loadString(string filePath)
     {
@@ -80,5 +93,17 @@ public class MapRenderer : MonoBehaviour
                 Renderer(tile.returnType(num), j , i);
             }
         }
+    }
+    public string CombinePath()
+    {
+        string test = (path + "test" + GameManager.Instance.currentmap.ToString() + ".txt").ToString();
+        Debug.Log(test);
+        return test;
+    }
+    public void NewMap(string path)
+    {
+        loadString(path);
+        Genmap();
+        player.transform.position = getStartPoint;
     }
 }

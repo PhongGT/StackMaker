@@ -100,44 +100,44 @@ public class PlayerMovement : MonoBehaviour
 
 
     }
-    //public void Rundir(string dir)
-    //{
+    public void Rundir(string dir)
+    {
 
 
 
-    //    switch (dir)
-    //    {
-    //        case "RunUp":
-    //            {
-    //                this.transform.rotation = Quaternion.Euler(new Vector3(0,0,0));
-    //                GoNext();
-    //                return;
-    //            }
-    //        case "RunDown":
-    //            {
-    //                this.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
-    //                GoNext();
-    //                return;
-    //            }
-    //        case "RunRight":
-    //            {
-    //                this.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
-    //                GoNext();
-    //                return;
-    //            }
-    //        case "RunLeft":
-    //            {
-    //                this.transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
-    //                GoNext();
-    //                return;
-    //            }
-    //            default:
-    //            return;
+        switch (dir)
+        {
+            case "RunUp":
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+                    GoNext();
+                    return;
+                }
+            case "RunDown":
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+                    GoNext();
+                    return;
+                }
+            case "RunRight":
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
+                    GoNext();
+                    return;
+                }
+            case "RunLeft":
+                {
+                    this.transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+                    GoNext();
+                    return;
+                }
+            default:
+                return;
 
 
-    //    }
+        }
 
-    //}
+    }
 
     private IEnumerator GoNext()
     {
@@ -153,12 +153,17 @@ public class PlayerMovement : MonoBehaviour
 
 
         }
+        else if(checkInFront.curGameObjt.CompareTag("AutoTurn"))
+        {
+           
+        }
         else if (checkInFront.curGameObjt.CompareTag("End"))
         {
             nextPos = new Vector3(checkInFront.curGameObjt.transform.position.x, transform.position.y, checkInFront.curGameObjt.transform.position.z);
             this.gameObject.transform.position = nextPos;
             yield return new WaitForSeconds(0.1f);
             isMoving = false;
+            GameManager.Instance.ReachFinish();    
         }
         else
         {
@@ -183,11 +188,11 @@ public class PlayerMovement : MonoBehaviour
         {
             checkInFront.lateObject.transform.SetParent(player.transform);
             Vector3 pos = player.transform.position;
-            pos.y -= -0.1f;
+            pos.y -= 0.1f;
             pos.y -= player.transform.position.y;
             tile.transform.position = pos;
             Vector3 playerRePos = player.transform.localPosition;
-            playerRePos.y += 0.1f;
+            playerRePos.y += 0.2f;
             player.transform.localPosition = playerRePos;
 
             tile.GetComponent<BoxCollider>().isTrigger = false;
@@ -207,7 +212,7 @@ public class PlayerMovement : MonoBehaviour
             pos.y += 0.1f;
             brick.transform.position = pos;
             Vector3 playerRePos = player.transform.localPosition;
-            playerRePos.y -= 0.1f;
+            playerRePos.y -= 0.2f;
             player.transform.localPosition = playerRePos;
             tile.tag = "Untagged";
             checkInFront.lateObject = null;
